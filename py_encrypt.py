@@ -24,6 +24,10 @@ parser.add_argument('-d', '--debug', action='store_true',
                     console as well as to a file to assist in verifying
                     encryption/decryption processes.''')
 
+# TODO: Add filepath/filename option
+parser.add_argument('-k', '--gen-key', action='store_true',
+                    help='''Generates encryption/decryption key''')
+
 args = vars(parser.parse_args())
 
 # Generate a password (16 characters by default, could be configurable)
@@ -80,12 +84,14 @@ def decrypt_file():
 
 def main():
 
+    if args['gen_key']:
+        key = Fernet.generate_key()
+        with open('key.key', 'wb') as file:
+            file.write(key)
+
     pw = gen_password()
 
-    # Prints and saves plain text password as a text file, useful for debugging
-    # Uncomment the next 3 lines of code to enable this feature
-    # TODO: Add this feature as a command line arg 
-
+    # Prints and saves plain text password as a text file, if debug arg was passed
     if args['debug']:
         print(pw)
         with open('pwd.txt', 'w') as file:
@@ -95,10 +101,7 @@ def main():
 
     plain_text = decrypt_file()
 
-    # Another line useful for debugging/verificaiton of decryption process
-    # Uncomment the print statement below to enable
-    # TODO: Add this to the command line args 
-
+    # Prints plain text password to console if debug arg was passed
     if args['debug']:
         print(plain_text)
 
