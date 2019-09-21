@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import argparse
 import secrets
 import string
 from cryptography.fernet import Fernet
@@ -12,6 +13,18 @@ try:
 except Exception:
     print("This script requires Python 3")
     sys.exit()
+
+parser = argparse.ArgumentParser(
+    description='''This script generates a password, encrypts it with
+                   a previously generated key, and can decrypt as well.
+                ''')
+
+parser.add_argument('-d', '--debug', action='store_true',
+                    help='''Enables plain text output to the
+                    console as well as to a file to assist in verifying
+                    encryption/decryption processes.''')
+
+args = vars(parser.parse_args())
 
 # Generate a password (16 characters by default, could be configurable)
 def gen_password(length=16):
@@ -73,9 +86,10 @@ def main():
     # Uncomment the next 3 lines of code to enable this feature
     # TODO: Add this feature as a command line arg 
 
-    #print(pw)
-    #with open('pwd.txt', 'w') as file:
-    #    file.write(pw)
+    if args['debug']:
+        print(pw)
+        with open('pwd.txt', 'w') as file:
+            file.write(pw)
 
     encrypt_file(pw)
 
@@ -85,7 +99,8 @@ def main():
     # Uncomment the print statement below to enable
     # TODO: Add this to the command line args 
 
-    print(plain_text)
+    if args['debug']:
+        print(plain_text)
 
 if __name__ == '__main__':
     main()
